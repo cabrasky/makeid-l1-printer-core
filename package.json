@@ -1,6 +1,6 @@
 {
   "name": "makeid-l1-printer-core",
-  "version": "1.0.0",
+  "version": "1.0.0a",
   "author": {
     "name": "cabrasky",
     "email": "javiemateos149@gmail.com"
@@ -8,6 +8,22 @@
   "description": "Core printer functionality for MakeID L1",
   "main": "dist/index.js",
   "type": "module",
+  "keywords": [
+    "printer",
+    "label",
+    "MakeID",
+    "L1",
+    "thermal",
+    "template",
+    "json",
+    "typescript",
+    "nodejs",
+    "serialport",
+    "canvas",
+    "printing",
+    "core",
+    "utility"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "node --loader ts-node/esm src/index.ts",
