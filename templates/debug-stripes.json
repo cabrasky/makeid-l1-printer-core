@@ -1,0 +1,28 @@
+{
+  "name": "debug-stripes",
+  "description": "Debug template with horizontal stripes for line counting",
+  "dimensions": {
+    "width": 600
+  },
+  "elements": [
+    {
+      "type": "stripes",
+      "direction": "horizontal",
+      "spacing": 10,
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "Line Count Test",
+      "position": { "x": 10, "y": 20 },
+      "fontSize": 16
+    },
+    {
+      "type": "rectangle",
+      "position": { "x": 0, "y": 0 },
+      "width": 227,
+      "height": 152,
+      "filled": false
+    }
+  ]
+}

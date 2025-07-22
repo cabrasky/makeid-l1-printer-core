@@ -1,0 +1,30 @@
+{
+  "name": "measurement-grid",
+  "description": "Grid template for precise measurement and alignment testing",
+  "elements": [
+    {
+      "type": "grid",
+      "cellWidth": 20,
+      "cellHeight": 10,
+      "lineWidth": 1
+    },
+    {
+      "type": "text",
+      "content": "GRID TEST",
+      "position": { "x": 5, "y": 15 },
+      "fontSize": 12
+    },
+    {
+      "type": "text",
+      "content": "20px x 10px cells",
+      "position": { "x": 5, "y": 30 },
+      "fontSize": 10
+    },
+    {
+      "type": "circle",
+      "center": { "x": 200, "y": 20 },
+      "radius": 5,
+      "filled": true
+    }
+  ]
+}

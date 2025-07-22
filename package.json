@@ -1,0 +1,48 @@
+{
+  "name": "makeid-l1-printer-core",
+  "version": "1.0.0",
+  "author": {
+    "name": "cabrasky",
+    "email": "javiemateos149@gmail.com"
+  },
+  "description": "Core printer functionality for MakeID L1",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "test": "npm run dev",
+    "test:verbose": "cross-env DEBUG_MODE=true VERBOSE_LOGGING=true npm run dev",
+    "test:debug": "cross-env DEBUG_MODE=true npm run dev",
+    "json:debug": "cross-env DEBUG_MODE=true npm run dev -- --json labeled-lines",
+    "json:stripes": "npm run dev -- --json debug-stripes",
+    "json:grid": "npm run dev -- --json measurement-grid",
+    "json:text": "npm run dev -- --json simple-text"
+  },
+  "dependencies": {
+    "canvas": "^2.10.2",
+    "dotenv": "^16.3.0",
+    "rimraf": "^6.0.1",
+    "serialport": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "cross-env": "^7.0.3",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.3.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./services": {
+      "import": "./dist/services/index.js",
+      "types": "./dist/services/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  }
+}

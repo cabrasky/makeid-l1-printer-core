@@ -1,0 +1,137 @@
+{
+  "name": "labeled-lines",
+  "description": "Numbered horizontal lines for counting test",
+  "defaultFont": {
+    "family": "Arial",
+    "size": 8
+  },
+  "elements": [
+    {
+      "type": "line",
+      "start": { "x": 0, "y": 10 },
+      "end": { "x": 220, "y": 10 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "1",
+      "position": { "x": 225, "y": 13 },
+      "fontSize": 8
+    },
+    {
+      "type": "line",
+      "start": { "x": 0, "y": 20 },
+      "end": { "x": 220, "y": 20 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "2",
+      "position": { "x": 225, "y": 23 },
+      "fontSize": 8
+    },
+    {
+      "type": "line",
+      "start": { "x": 0, "y": 30 },
+      "end": { "x": 220, "y": 30 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "3",
+      "position": { "x": 225, "y": 33 },
+      "fontSize": 8
+    },
+    {
+      "type": "line",
+      "start": { "x": 0, "y": 40 },
+      "end": { "x": 220, "y": 40 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "4",
+      "position": { "x": 225, "y": 43 },
+      "fontSize": 8
+    },
+    {
+      "type": "line",
+      "start": { "x": 0, "y": 50 },
+      "end": { "x": 220, "y": 50 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "5",
+      "position": { "x": 225, "y": 53 },
+      "fontSize": 8
+    },
+    {
+      "type": "line",
+      "start": { "x": 0, "y": 60 },
+      "end": { "x": 220, "y": 60 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "6",
+      "position": { "x": 225, "y": 63 },
+      "fontSize": 8
+    },
+    {
+      "type": "line",
+      "start": { "x": 0, "y": 70 },
+      "end": { "x": 220, "y": 70 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "7",
+      "position": { "x": 225, "y": 73 },
+      "fontSize": 8
+    },
+    {
+      "type": "line",
+      "start": { "x": 0, "y": 80 },
+      "end": { "x": 220, "y": 80 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "8",
+      "position": { "x": 225, "y": 83 },
+      "fontSize": 8
+    },
+    {
+      "type": "line",
+      "start": { "x": 0, "y": 90 },
+      "end": { "x": 220, "y": 90 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "9",
+      "position": { "x": 225, "y": 93 },
+      "fontSize": 8
+    },
+    {
+      "type": "line",
+      "start": { "x": 0, "y": 100 },
+      "end": { "x": 220, "y": 100 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "10",
+      "position": { "x": 225, "y": 103 },
+      "fontSize": 8
+    },
+    {
+      "type": "rectangle",
+      "position": { "x": 0, "y": 0 },
+      "width": 227,
+      "height": 152,
+      "filled": false
+    }
+  ]
+}

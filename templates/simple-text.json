@@ -1,0 +1,22 @@
+{
+  "name": "simple-text",
+  "description": "Simple two-line text template",
+  "defaultFont": {
+    "family": "Norwester Condensed",
+    "size": 16
+  },
+  "elements": [
+    {
+      "type": "text",
+      "content": "{{line1}}",
+      "position": { "x": 0, "y": 32 },
+      "align": "left"
+    },
+    {
+      "type": "text", 
+      "content": "{{line2}}",
+      "position": { "x": 0, "y": 64 },
+      "align": "left"
+    }
+  ]
+}

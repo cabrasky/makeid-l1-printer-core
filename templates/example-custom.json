@@ -1,0 +1,50 @@
+{
+  "name": "Example Custom Template",
+  "description": "Demonstrates custom template usage with variables",
+  "defaultFont": {
+    "family": "Norwester Condensed",
+    "size": 14
+  },
+  "elements": [
+    {
+      "type": "text",
+      "content": "Welcome {{name}}!",
+      "position": { "x": 100, "y": 20 },
+      "fontSize": 18,
+      "fontFamily": "Norwester Condensed",
+      "align": "center"
+    },
+    {
+      "type": "line",
+      "start": { "x": 20, "y": 35 },
+      "end": { "x": 180, "y": 35 },
+      "width": 1
+    },
+    {
+      "type": "text",
+      "content": "Date: {{date}}",
+      "position": { "x": 20, "y": 50 },
+      "fontSize": 12
+    },
+    {
+      "type": "text",
+      "content": "ID: {{id}}",
+      "position": { "x": 20, "y": 65 },
+      "fontSize": 12
+    },
+    {
+      "type": "rectangle",
+      "position": { "x": 15, "y": 75 },
+      "width": 170,
+      "height": 25,
+      "filled": false
+    },
+    {
+      "type": "text",
+      "content": "{{message}}",
+      "position": { "x": 100, "y": 90 },
+      "fontSize": 10,
+      "align": "center"
+    }
+  ]
+}
