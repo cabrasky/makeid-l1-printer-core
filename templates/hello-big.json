@@ -1,0 +1,20 @@
+{
+  "name": "hello-big",
+  "description": "Big text test label",
+  "dimensions": { "width": 320, "height": 24 },
+  "defaultFont": { "family": "Norwester Condensed", "size": 28 },
+  "elements": [
+    {
+      "type": "text",
+      "content": "{{line1}}",
+      "position": { "x": 16, "y": 38 },
+      "align": "left"
+    },
+    {
+      "type": "text",
+      "content": "{{line2}}",
+      "position": { "x": 16, "y": 85 },
+      "align": "left"
+    }
+  ]
+}

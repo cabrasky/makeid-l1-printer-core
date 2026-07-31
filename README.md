@@ -160,6 +160,42 @@ Configuration files offer a powerful way to extensively customize printer settin
 
 This configuration can be seamlessly loaded using the utilities available in `lib.ts` or directly incorporated into your application's startup logic via CLI arguments.
 
+## Direct Printing Tools (multiplatform) 🖨️
+
+Besides the serial-based `PrinterService`, the repo includes self-contained CLI tools that render JSON templates and send the raster to the printer. **Preview and print share the exact same renderer** (`render.mjs`), so what you see in the preview is what gets printed.
+
+| Tool | Purpose |
+|---|---|
+| `print-usb.mjs` | Render template → send raster (direct USB device or serial port) |
+| `preview.mjs` | Render template → PNG preview (`node preview.mjs <template> <line1> <line2> out.png`) |
+| `mosaic.mjs` | 4×4 design mosaic (16 label designs) to pick from |
+| `mosaic4.mjs` | Font sampler: one layout rendered with many typographies |
+| `render.mjs` | Shared renderer: template → canvas → column-major raster |
+| `fonts.mjs` | Registers bundled fonts (repo `fonts/`) + optional system fonts |
+
+```bash
+node print-usb.mjs ./templates/backups-term-vt323.json "BACKUPS" "USB STORAGE" --dry-run  # generate only
+sudo node print-usb.mjs ./templates/backups-term-vt323.json "BACKUPS" "USB STORAGE"       # print
+```
+
+### Printer connection (Windows & Linux)
+
+- **Serial port** (Bluetooth SPP / USB-serial): `PRINTER_DEVICE=COM3` (Windows) or `PRINTER_DEVICE=/dev/ttyUSB0` (Linux) — uses `serialport` at 57600 baud.
+- **Direct USB device** (Linux only): defaults to `/dev/usb/lp0` (usblp) when present — raw device write, no serial needed.
+- Defaults: Windows → `COM3` (serial); Linux → `/dev/usb/lp0` if it exists, otherwise `/dev/ttyUSB0`.
+- Override anything with the `PRINTER_DEVICE` environment variable.
+- On Linux, writing to `/dev/usb/lp0` requires root or membership in the `lp` group (`sudo node print-usb.mjs …`).
+
+### Fonts
+
+Custom fonts are **bundled in `fonts/`** (Norwester, VT323, Share Tech Mono, Audiowide, Rajdhani, Saira Stencil One, Stardos Stencil) and registered by `fonts.mjs` with paths relative to the module — **no hardcoded system paths**, works on Windows and Linux. Optional system fonts (DejaVu/Free/Liberation, POSIX paths) are registered only when present and silently skipped elsewhere.
+
+### Protocol notes (MakeID L1)
+
+- The L1 does **not** speak plain ESC/POS text — it needs the custom framing `0x10 0xFF 0xFE` wrapping a GS v 0 raster.
+- Firmware limits: raster width **≤ 255 px** per block (wider → blank paper); safe size is 227×136 (repo defaults). Multi-block/split jobs do not work.
+- Templates: `dimensions {width ≤ 255, height in bytes}`, elements text/rectangle/line/circle/stripes/grid, variables `{{line1}}`/`{{line2}}`.
+
 ## Contributing 🤝
 
 We welcome contributions to printer-core! If you have suggestions, bug reports, or want to contribute code, please check out our [Contributing Guidelines](CONTRIBUTING.md).

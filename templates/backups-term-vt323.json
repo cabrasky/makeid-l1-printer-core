@@ -1,0 +1,24 @@
+{
+  "name": "backups-term-vt323",
+  "description": "USB BACKUPS label - VT323 retro terminal (big version)",
+  "dimensions": { "width": 227, "height": 17 },
+  "defaultFont": { "family": "Norwester Condensed", "size": 28 },
+  "elements": [
+    {
+      "type": "text",
+      "content": "{{line1}}",
+      "fontSize": 40,
+      "fontFamily": "VT323",
+      "position": { "x": 54, "y": 36 },
+      "align": "center"
+    },
+    {
+      "type": "text",
+      "content": "> {{line2}}_",
+      "fontSize": 14,
+      "fontFamily": "VT323",
+      "position": { "x": 54, "y": 54 },
+      "align": "center"
+    }
+  ]
+}

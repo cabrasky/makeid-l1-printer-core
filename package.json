@@ -33,7 +33,12 @@
     "json:debug": "cross-env DEBUG_MODE=true npm run dev -- --json labeled-lines",
     "json:stripes": "npm run dev -- --json debug-stripes",
     "json:grid": "npm run dev -- --json measurement-grid",
-    "json:text": "npm run dev -- --json simple-text"
+    "json:text": "npm run dev -- --json simple-text",
+    "print": "node print-usb.mjs",
+    "print:dry": "node print-usb.mjs --dry-run",
+    "preview": "node preview.mjs",
+    "mosaic": "node mosaic.mjs",
+    "mosaic:fonts": "node mosaic4.mjs"
   },
   "dependencies": {
     "canvas": "^3.1.2",

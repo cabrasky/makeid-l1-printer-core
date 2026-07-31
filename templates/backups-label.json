@@ -1,0 +1,30 @@
+{
+  "name": "backups-label",
+  "description": "USB BACKUPS label - tech style",
+  "dimensions": { "width": 227, "height": 17 },
+  "defaultFont": { "family": "Norwester Condensed", "size": 40 },
+  "elements": [
+    {
+      "type": "rectangle",
+      "position": { "x": 1, "y": 1 },
+      "width": 106,
+      "height": 62
+    },
+    {
+      "type": "text",
+      "content": "{{line1}}",
+      "fontSize": 60,
+      "fontFamily": "Saira Stencil One",
+      "position": { "x": 54, "y": 32 },
+      "align": "center"
+    },
+    {
+      "type": "text",
+      "content": "{{line2}}",
+      "fontSize": 16,
+      "fontFamily": "DejaVu Sans Mono",
+      "position": { "x": 54, "y": 52 },
+      "align": "center"
+    }
+  ]
+}

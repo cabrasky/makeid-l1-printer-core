@@ -28,3 +28,9 @@ coverage/
 
 # Optional: ignore local config
 printer-config.json
+
+# Render outputs / debug images (generated at repo root)
+*.png
+json-render-*
+debug-print-*
+printer-image-*

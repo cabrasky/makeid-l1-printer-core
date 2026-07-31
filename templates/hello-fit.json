@@ -1,0 +1,22 @@
+{
+  "name": "hello-fit",
+  "description": "Big text within proven 227x136 label area",
+  "dimensions": { "width": 227, "height": 17 },
+  "defaultFont": { "family": "Norwester Condensed", "size": 32 },
+  "elements": [
+    {
+      "type": "text",
+      "content": "{{line1}}",
+      "fontSize": 60,
+      "position": { "x": 0, "y": 40 },
+      "align": "left"
+    },
+    {
+      "type": "text",
+      "content": "{{line2}}",
+      "fontSize": 32,
+      "position": { "x": 0, "y": 60 },
+      "align": "left"
+    }
+  ]
+}
