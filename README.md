@@ -3,6 +3,7 @@
 This package provides the essential core functionality for the MakeID L1 printer, encompassing template rendering, printing operations, and a suite of utility functions. This document serves as a comprehensive guide to its primary entry points: `index.ts` and `lib.ts`.
 
 ## 📖 Table of Contents
+- [Supported Printers](#supported-printers)
 - [index.ts: Application Entry Point](#indexts-application-entry-point)
   - [Example Usage](#example-usage)
 - [lib.ts: Core Printing API Reference](#libts-core-printing-api-reference)
@@ -19,6 +20,31 @@ This package provides the essential core functionality for the MakeID L1 printer
 - [Example Configuration (printer-config.json)](#example-configuration-printer-configjson)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Supported Printers 🖨️
+
+Every printer supported by this repo is defined by a **profile** in [`printers/`](printers/) — one JSON file per model (protocol bytes, raster layout, DPI, firmware limits, connection defaults, supported paper). Adding a new printer = adding one JSON file; no code changes required.
+
+| Printer | Profile | USB VID:PID | Protocol | Raster | Connection | Diecut (precut) | Continuous (roll) | Physically validated |
+|---|---|---|---|---|---|---|---|---|
+| **MakeID L1** *(MakeID Life A1)* | [`printers/makeid-l1.json`](printers/makeid-l1.json) | `09c5:0200` | ✅ Custom framing `0x10 0xFF 0xFE` + GS v 0 | ✅ column-major, topLSB | ✅ USB direct (`/dev/usb/lp0`) + serial 57600 | ✅ **Tested** (227×136, gap sensor) | 🟡 Implemented (feed dots) — not tested on hardware | ✅ Labels printed |
+| **Generic ESC/POS 58mm** | [`printers/escpos-58.json`](printers/escpos-58.json) | — | 🟡 Standard ESC/POS GS v 0 | 🟡 row-major, leftLSB | 🟡 Serial (COMx / ttyUSB) | 🟡 Defined (384×200) | 🟡 Defined (feed lines) | ⬜ No hardware yet |
+
+**Legend:** ✅ fully supported · 🟡 implemented, pending hardware validation · ⬜ not started / no hardware
+
+### Integration progression
+
+Each new printer goes through the same stages. The table above reflects where each model stands today:
+
+1. **Profile** — `printers/<id>.json` with protocol bytes, raster layout, limits and media definitions.
+2. **Protocol** — header format (`heightBytesBE-widthPxBE`, `widthBytesLE-heightDotsLE`…), framing prefix/postfix, feed command.
+3. **Raster** — renderer emits the expected bit layout (column-major / row-major, bit order, white value).
+4. **Connection** — direct USB device, serial port (defaults per OS in the profile), `PRINTER_DEVICE` override.
+5. **Diecut** — precut label media: raster height must match label height (padding/error handling).
+6. **Continuous** — roll media: content-sized raster + configurable extra feed (`feedAfterDots` / `feedAfterLines`).
+7. **Physical validation** — real hardware print test (preview ≠ proof; only printing on the actual device closes this stage).
+
+> Adding a printer that only differs in **media size or defaults** (e.g. another 58mm ESC/POS with different label width) is a copy-paste of an existing profile with adjusted values. A printer with a **different raster command or header layout** needs its own `rasterCommand` / `headerFormat` entry — the payload builder (`protocol.mjs`) is the extension point.
 
 ## index.ts: Application Entry Point 🚀
 

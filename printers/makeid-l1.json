@@ -1,5 +1,6 @@
 {
   "name": "MakeID L1",
+  "aliases": ["MakeID Life A1"],
   "id": "makeid-l1",
   "usb": { "vendorId": "09c5", "productId": "0200" },
   "dpi": 203,
