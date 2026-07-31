@@ -4,7 +4,7 @@ import { renderTemplate, canvasToImageData } from "./render.mjs";
 import { loadConfig, loadProfile, buildPayload } from "./protocol.mjs";
 
 // Uso como CLI: sudo node print-usb.mjs [template.json] [line1] [line2] [--dry-run]
-// Uso como biblioteca: import { printJob } from "printer-core/print";
+// Uso como biblioteca: import { printJob } from "label-printer-core/print";
 //
 // Todo configurable: printers/*.json (perfil de impresora), config.json
 // (impresora activa, dispositivo, tipo de papel), env PRINTER_DEVICE/PRINTER_CONFIG.

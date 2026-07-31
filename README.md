@@ -1,4 +1,4 @@
-# printer-core 🖨️
+# label-printer-core 🖨️
 
 Generic thermal **label printer core**: render JSON templates to a raster and print them on any thermal printer described by a [printer profile](printers/) — protocol bytes, raster layout, firmware limits and paper types, all externalized as data. This package provides template rendering, printing operations, and a suite of utility functions. This document serves as a comprehensive guide to its primary entry points: `index.ts` and `lib.ts`.
 
@@ -54,7 +54,7 @@ The `index.ts` file is designed as the primary entry point for the printer appli
 Here's how you can leverage the `printTemplate`, `printFromFile`, and `printFromTemplate` functions from `index.ts`:
 
 ```typescript
-import { printTemplate, printFromFile, printFromTemplate } from 'printer-core/lib.js';
+import { printTemplate, printFromFile, printFromTemplate } from 'label-printer-core/lib.js';
 
 // Print using a built-in template by its registered name
 await printTemplate('simple-text', { text: 'Hello World' });
@@ -114,7 +114,7 @@ Templates are standard JSON objects that precisely define the layout and content
 ## Extending and Managing Templates ➕
 
 ### Adding New Templates
-Integrating new custom templates into your printer-core application is straightforward:
+Integrating new custom templates into your label-printer-core application is straightforward:
 1. Create a new JSON file (e.g., `my-new-label.json`) and place it within the `templates/` directory of your project.
 2. Define your template's structure within this JSON file, including its elements and any desired variable placeholders, as detailed in the "Template Structure" section.
 3. Once created, you can utilize your new template by its name (e.g., `printTemplate('my-new-label', { ... })`) or by its file path (e.g., `printFromFile('./templates/my-new-label.json', { ... })`).
@@ -150,7 +150,7 @@ logger.info('Printer service initialized successfully.');
 
 ## Error Handling and Debugging 🐞
 
-The printer-core package incorporates built-in mechanisms to facilitate robust error handling and efficient debugging:
+The label-printer-core package incorporates built-in mechanisms to facilitate robust error handling and efficient debugging:
 - All primary print functions (`printTemplate`, `printFromFile`, `printFromTemplate`) are meticulously designed to log any errors that occur during the print operation to the console.
 - In the event of a critical failure during a print job, the process will exit with a non-zero exit code. This signals an unsuccessful operation, which is crucial for automation scripts and CI/CD pipelines.
 - For custom logging requirements and to gain more detailed insights into application behavior, you can directly utilize the `Logger` utility.
@@ -158,7 +158,7 @@ The printer-core package incorporates built-in mechanisms to facilitate robust e
 
 ## CLI and Integration 🔗
 
-When developing a command-line interface (CLI) tool or integrating printer-core into larger systems, the functions exposed in `lib.ts` serve as your primary interface for initiating printing and rendering operations. Furthermore, the package provides convenient argument parsing and configuration utilities, enabling you to build highly customizable and adaptable workflows for your application.
+When developing a command-line interface (CLI) tool or integrating label-printer-core into larger systems, the functions exposed in `lib.ts` serve as your primary interface for initiating printing and rendering operations. Furthermore, the package provides convenient argument parsing and configuration utilities, enabling you to build highly customizable and adaptable workflows for your application.
 
 ## Example Configuration (printer-config.json) 📝
 
@@ -252,7 +252,7 @@ All "magic numbers" are externalized per printer model: protocol bytes (prefix/G
 
 ## Contributing 🤝
 
-We welcome contributions to printer-core! If you have suggestions, bug reports, or want to contribute code, please check out our [Contributing Guidelines](CONTRIBUTING.md).
+We welcome contributions to label-printer-core! If you have suggestions, bug reports, or want to contribute code, please check out our [Contributing Guidelines](CONTRIBUTING.md).
 
 ## License 📄
 
