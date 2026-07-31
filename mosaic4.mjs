@@ -1,55 +1,32 @@
 import { writeFileSync } from "node:fs";
 import path from "node:path";
 import { createCanvas } from "canvas";
-import { registerAllFonts } from "./fonts.mjs";
+import { renderTemplate } from "./render.mjs";
+import { loadConfig, loadProfile } from "./protocol.mjs";
 
-registerAllFonts();
-
-const SCALE = 203 / 96;
-const MARGIN = 8;
-const W = 227, H = 136;
-
-const substitute = (content, vars) =>
-  Object.entries(vars).reduce(
-    (r, [k, v]) => r.replace(new RegExp(`{{${k}}}`, "g"), String(v)),
-    content
-  );
-
-const measure = (text, family, px, weight = "normal") => {
-  const c = createCanvas(4, 4);
-  const x = c.getContext("2d");
-  x.font = `${weight} ${px}px "${family}"`;
-  return x.measureText(text).width;
+// Sampler de tipografías sobre el layout "terminal" (diseño 4 del mosaico).
+// Usa el MISMO renderizador que la impresión (render.mjs).
+const cfg = loadConfig();
+const profile = loadProfile(cfg.printer);
+const renderCtx = {
+  dpi: profile.dpi,
+  scaleDpi: cfg.render?.scaleDpi ?? 96,
+  textMarginPx: cfg.render?.textMarginPx ?? 8,
 };
 
-// Design #4 layout, font injected per cell
+const W = 227, H = 136;
+
 function render4(family, weight = "normal") {
-  const canvas = createCanvas(W, H);
-  const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, W, H);
-
-  const drawText = (text, size, y, align = "left", xPos = 6) => {
-    const avail = align === "center" ? W - 2 * MARGIN : W - Math.round(xPos * SCALE) - MARGIN;
-    let s = Math.round(size * SCALE);
-    const w = measure(text, family, s, weight);
-    if (w > avail) s = Math.round(s * (avail / w) * 0.97);
-    ctx.font = `${weight} ${s}px "${family}"`;
-    ctx.textAlign = align;
-    ctx.fillStyle = "#000000";
-    ctx.fillText(text, Math.round(xPos * SCALE), Math.round(y * SCALE));
+  const tpl = {
+    dimensions: { width: W, height: H },
+    defaultFont: { family: "Norwester Condensed", size: 22 },
+    elements: [
+      { type: "grid", bounds: { x: 0, y: 0, width: 107, height: 64 }, cellWidth: 13, cellHeight: 13, alpha: 0.12 },
+      { type: "text", content: "> {{line1}}_", fontSize: 22, fontFamily: family, weight, position: { x: 6, y: 30 }, align: "left" },
+      { type: "text", content: "{{line2}}", fontSize: 12, fontFamily: family, weight, position: { x: 6, y: 48 }, align: "left" },
+    ],
   };
-
-  // grid bg
-  const cw = Math.round(13 * SCALE), ch = Math.round(13 * SCALE);
-  ctx.strokeStyle = "rgba(0,0,0,0.12)";
-  ctx.lineWidth = 1;
-  for (let x = 0; x <= W; x += cw) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-  for (let y = 0; y <= H; y += ch) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-
-  drawText("> BACKUPS_", 22, 30);
-  drawText("USB STORAGE", 12, 48);
-  return canvas;
+  return renderTemplate(tpl, { line1: "BACKUPS", line2: "USB STORAGE" }, renderCtx);
 }
 
 const fonts = [
@@ -95,5 +72,5 @@ fonts.forEach(([label, family, weight], i) => {
 });
 
 writeFileSync(path.join(process.cwd(), "backups-fonts-mosaic.png"), mosaic.toBuffer("image/png"));
-console.log(`mosaic4 -> ./backups-fonts-mosaic.png (${MW}x${MH})`);
+console.log(`mosaic4 -> ./backups-fonts-mosaic.png (${MW}x${MH}) | printer: ${profile.name}`);
 for (const [label] of fonts) console.log(" -", label);

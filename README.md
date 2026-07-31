@@ -190,11 +190,39 @@ sudo node print-usb.mjs ./templates/backups-term-vt323.json "BACKUPS" "USB STORA
 
 Custom fonts are **bundled in `fonts/`** (Norwester, VT323, Share Tech Mono, Audiowide, Rajdhani, Saira Stencil One, Stardos Stencil) and registered by `fonts.mjs` with paths relative to the module — **no hardcoded system paths**, works on Windows and Linux. Optional system fonts (DejaVu/Free/Liberation, POSIX paths) are registered only when present and silently skipped elsewhere.
 
+### Configuration (`config.json`)
+
+All runtime choices live in `config.json` (override with `PRINTER_CONFIG` env):
+
+```json
+{
+  "printer": "makeid-l1",
+  "device": null,
+  "media": {
+    "type": "diecut",
+    "label": null,
+    "feedAfterDots": null
+  },
+  "render": { "textMarginPx": 8, "scaleDpi": 96 }
+}
+```
+
+- `printer` → profile id from `printers/` (e.g. `makeid-l1`, `escpos-58`).
+- `device` → `null` = platform default from the profile (`COM3` on Windows, `/dev/usb/lp0` on Linux); or an explicit serial/device path. `PRINTER_DEVICE` env wins.
+- `media.type` → `diecut` (precut labels) or `continuous` (continuous roll):
+  - **diecut**: the raster height must match the label height (gap sensor alignment). If the template is shorter it is padded; taller → error.
+  - **continuous**: the raster height is the content height; an extra configurable feed is appended (`feedAfterDots` for the L1, dots; ESC/POS profiles use `feedAfterLines`).
+- `media.label` → optional `{widthPx, heightPx}` override of the profile's label size.
+
+### Printer profiles (`printers/*.json`)
+
+All "magic numbers" are externalized per printer model: protocol bytes (prefix/GS v 0 header format/postfix/trailer/feed command), raster layout (column-major vs row-major, bit order), DPI, firmware limits, connection defaults and supported paper types. **Adding another printer = adding one JSON file** (see `printers/escpos-58.json` for a standard ESC/POS example). Header formats supported: `heightBytesBE-widthPxBE` (MakeID L1) and `widthBytesLE-heightDotsLE` (standard ESC/POS).
+
 ### Protocol notes (MakeID L1)
 
-- The L1 does **not** speak plain ESC/POS text — it needs the custom framing `0x10 0xFF 0xFE` wrapping a GS v 0 raster.
-- Firmware limits: raster width **≤ 255 px** per block (wider → blank paper); safe size is 227×136 (repo defaults). Multi-block/split jobs do not work.
-- Templates: `dimensions {width ≤ 255, height in bytes}`, elements text/rectangle/line/circle/stripes/grid, variables `{{line1}}`/`{{line2}}`.
+- The L1 does **not** speak plain ESC/POS text — it needs the custom framing `0x10 0xFF 0xFE` wrapping a GS v 0 raster (all encoded in `printers/makeid-l1.json`).
+- Firmware limits: raster width **≤ 255 px** per block (wider → blank paper); safe size is 227×136. Multi-block/split jobs do not work.
+- Templates: `dimensions {width, height}` in **pixels**, elements text/rectangle/line/circle/stripes/grid, variables `{{line1}}`/`{{line2}}`.
 
 ## Contributing 🤝
 

@@ -1,7 +1,7 @@
 {
   "name": "hello-big2",
   "description": "Big text within 255px printer limit",
-  "dimensions": { "width": 255, "height": 24 },
+  "dimensions": { "width": 255, "height": 192 },
   "defaultFont": { "family": "Norwester Condensed", "size": 30 },
   "elements": [
     {

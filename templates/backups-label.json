@@ -1,7 +1,7 @@
 {
   "name": "backups-label",
   "description": "USB BACKUPS label - tech style",
-  "dimensions": { "width": 227, "height": 17 },
+  "dimensions": { "width": 227, "height": 136 },
   "defaultFont": { "family": "Norwester Condensed", "size": 40 },
   "elements": [
     {

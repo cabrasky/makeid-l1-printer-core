@@ -1,7 +1,7 @@
 {
   "name": "hello-big",
   "description": "Big text test label",
-  "dimensions": { "width": 320, "height": 24 },
+  "dimensions": { "width": 320, "height": 192 },
   "defaultFont": { "family": "Norwester Condensed", "size": 28 },
   "elements": [
     {

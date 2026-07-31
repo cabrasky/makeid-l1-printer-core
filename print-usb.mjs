@@ -1,12 +1,10 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { renderTemplate, canvasToImageData } from "./render.mjs";
+import { loadConfig, loadProfile, buildPayload } from "./protocol.mjs";
 
 // Uso: sudo node print-usb.mjs [template.json] [line1] [line2] [--dry-run]
-// Conexión multiplataforma:
-//   - PRINTER_DEVICE env (p.ej. "COM3", "/dev/ttyUSB0", "/dev/usb/lp0")
-//   - Si parece puerto serie -> serialport (Windows COMx / Linux ttyUSB/ttyACM)
-//   - Si es un archivo de dispositivo -> escritura directa (usblp en Linux)
-//   - Por defecto: win32 -> COM3 (serie), linux -> /dev/usb/lp0 si existe, si no /dev/ttyUSB0
+// Todo configurable: printers/*.json (perfil de impresora), config.json
+// (impresora activa, dispositivo, tipo de papel), env PRINTER_DEVICE/PRINTER_CONFIG.
 
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run");
@@ -15,51 +13,80 @@ const templateFile = positional[0] ?? "./templates/backups-term-vt323.json";
 const line1 = positional[1] ?? "BACKUPS";
 const line2 = positional[2] ?? "USB STORAGE";
 
-const template = JSON.parse(readFileSync(templateFile, "utf8"));
-const canvas = renderTemplate(template, { line1, line2 });
-const imageData = canvasToImageData(canvas);
-const W = canvas.width;
-const HB = Math.ceil(canvas.height / 8); // alto en bytes (múltiplo de 8 px)
+// --- Configuración y perfil -------------------------------------------------
+const cfg = loadConfig();
+const profile = loadProfile(cfg.printer);
 
-// Protocolo MakeID L1: framing 0x10 0xFF 0xFE + raster GS v 0 (bloque ÚNICO)
-const prefix = [
-  0x10, 0xFF, 0xFE, 0x01,
-  0x10, 0xFF, 0xFE, 0x40,
-  0x1D, 0x76, 0x30,
-  HB >> 8, HB & 0xFF,
-  W >> 8, W & 0xFF,
-  0x00,
-];
-const postfix = [0x1B, 0x4A, 0x40, 0x10, 0xFF, 0xFE, 0x45];
-const payload = Buffer.from([...prefix, ...imageData, ...postfix]);
+const device =
+  process.env.PRINTER_DEVICE ??
+  cfg.device ??
+  profile.connection.defaultDevice[process.platform] ??
+  "/dev/usb/lp0";
 
-const isSerial = (dev) =>
-  /^COM\d+$/i.test(dev) || /ttyUSB|ttyACM|ttyS|ttyAMA|cu\./i.test(dev) || dev.startsWith("/dev/tty");
-
-function defaultDevice() {
-  if (process.platform === "win32") return process.env.PRINTER_DEVICE || "COM3";
-  if (existsSync("/dev/usb/lp0")) return "/dev/usb/lp0";
-  return "/dev/ttyUSB0";
+const mediaType = cfg.media?.type ?? profile.media.defaultType; // diecut | continuous
+if (!profile.media.paperTypes.includes(mediaType)) {
+  throw new Error(`Tipo de papel "${mediaType}" no soportado por ${profile.name} (${profile.media.paperTypes.join(", ")})`);
 }
 
-const device = process.env.PRINTER_DEVICE || defaultDevice();
+// --- Plantilla ---------------------------------------------------------------
+const tpl = JSON.parse(readFileSync(templateFile, "utf8"));
+const tplW = tpl.dimensions?.width ?? 227;
+const tplH = tpl.dimensions?.height ?? 136;
+
+// Validación de límites del firmware
+const maxW = profile.limits.maxWidthPx;
+if (maxW && tplW > maxW) {
+  throw new Error(`Ancho ${tplW}px excede el máximo del ${profile.name} (${maxW}px) — papel en blanco`);
+}
+
+// --- Tipo de papel -----------------------------------------------------------
+// diecut (precortado): la altura del raster debe ser la de la etiqueta para que
+//   el sensor de huecos alinee bien; si la plantilla es más baja se rellena.
+// continuous (rollo continuo): la altura la define el contenido; se añade
+//   alimentación extra configurable al final.
+let canvasH = tplH;
+let feedAfterDots = 0;
+if (mediaType === "diecut") {
+  const labelH = cfg.media?.label?.heightPx ?? profile.media.diecut.labelHeightPx;
+  const labelW = cfg.media?.label?.widthPx ?? profile.media.diecut.labelWidthPx;
+  if (tplH > labelH) {
+    throw new Error(`Plantilla ${tplH}px > etiqueta precortada ${labelH}px (${profile.name}) — se saldría de la etiqueta`);
+  }
+  if (tplH < labelH) {
+    console.warn(`[media] plantilla ${tplH}px < etiqueta ${labelH}px: se rellena hasta la altura de la etiqueta`);
+    canvasH = labelH;
+  }
+  if (tplW !== labelW) console.warn(`[media] ancho ${tplW}px != etiqueta ${labelW}px: el raster se imprime desde el borde izquierdo`);
+} else {
+  feedAfterDots = cfg.media?.feedAfterDots ?? profile.media.continuous.feedAfterDots ?? 0;
+}
+
+// --- Render + raster + payload ----------------------------------------------
+const renderCtx = {
+  dpi: profile.dpi,
+  scaleDpi: cfg.render?.scaleDpi ?? 96,
+  textMarginPx: cfg.render?.textMarginPx ?? 8,
+};
+const canvas = renderTemplate({ ...tpl, dimensions: { width: tplW, height: canvasH } }, { line1, line2 }, renderCtx);
+const raster = canvasToImageData(canvas, profile.raster.orientation, profile.raster.byteOrder);
+const payload = buildPayload(profile, raster, canvas.width, canvas.height, { feedAfterDots });
 
 console.log(
-  `[render] "${line1}" / "${line2}" | canvas ${W}x${canvas.height}px | payload ${payload.length} bytes | device: ${device}${dryRun ? " (dry-run)" : ""}`
+  `[render] "${line1}" / "${line2}" | canvas ${canvas.width}x${canvas.height}px | papel: ${mediaType} | payload ${payload.length} bytes | device: ${device}${dryRun ? " (dry-run)" : ""}`
 );
-
 if (dryRun) process.exit(0);
+
+// --- Envío (serie o dispositivo directo) -------------------------------------
+const isSerial = (dev) => new RegExp(profile.connection.serialPattern ?? "^COM\\d+$").test(dev);
 
 async function sendSerial(dev) {
   const { SerialPort } = await import("serialport");
   return new Promise((resolve, reject) => {
-    const port = new SerialPort({ path: dev, baudRate: 57600 });
+    const port = new SerialPort({ path: dev, baudRate: profile.connection.defaultBaudRate ?? 57600 });
     port.on("open", () => {
       port.write(payload, (err) => {
         if (err) return reject(err);
-        port.drain(() => {
-          port.close(() => resolve());
-        });
+        port.drain(() => port.close(() => resolve()));
       });
     });
     port.on("error", reject);

@@ -1,7 +1,7 @@
 {
   "name": "backups-stack",
   "description": "USB BACKUPS label - stacked stencil wordmark",
-  "dimensions": { "width": 227, "height": 17 },
+  "dimensions": { "width": 227, "height": 136 },
   "defaultFont": { "family": "Norwester Condensed", "size": 40 },
   "elements": [
     {

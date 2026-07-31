@@ -1,0 +1,41 @@
+{
+  "name": "Generic ESC/POS 58mm",
+  "id": "escpos-58",
+  "usb": { "vendorId": null, "productId": null },
+  "dpi": 203,
+  "connection": {
+    "defaultBaudRate": 57600,
+    "defaultDevice": { "win32": "COM1", "linux": "/dev/ttyUSB0" },
+    "serialPattern": "^COM\\d+$|ttyUSB|ttyACM|ttyS|ttyAMA|cu\\."
+  },
+  "protocol": {
+    "rasterCommand": "gs-v0",
+    "prefix": [],
+    "gsV0": {
+      "m": 0,
+      "headerFormat": "widthBytesLE-heightDotsLE",
+      "trailer": null
+    },
+    "postfix": [27, 100, 3],
+    "feedCommand": { "opcode": [27, 100], "unit": "lines" }
+  },
+  "raster": {
+    "orientation": "row-major",
+    "pixelsPerByte": 8,
+    "byteOrder": "leftLSB",
+    "whiteValue": 1
+  },
+  "limits": {
+    "maxWidthPx": 384,
+    "maxHeightPx": null,
+    "safeWidthPx": 384,
+    "safeHeightPx": 200
+  },
+  "media": {
+    "paperTypes": ["continuous", "diecut"],
+    "defaultType": "continuous",
+    "diecut": { "labelWidthPx": 384, "labelHeightPx": 200 },
+    "continuous": { "feedAfterLines": 3 }
+  },
+  "notes": "Perfil de ejemplo para impresoras ESC/POS genericas de 58mm (raster GS v 0 estandar, row-major, ancho 384px). Ajustar VID/PID, ancho y papel."
+}

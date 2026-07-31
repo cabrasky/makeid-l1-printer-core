@@ -1,0 +1,13 @@
+{
+  "printer": "makeid-l1",
+  "device": null,
+  "media": {
+    "type": "diecut",
+    "label": null,
+    "feedAfterDots": null
+  },
+  "render": {
+    "textMarginPx": 8,
+    "scaleDpi": 96
+  }
+}

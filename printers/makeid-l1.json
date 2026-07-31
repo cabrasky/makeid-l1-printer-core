@@ -1,0 +1,41 @@
+{
+  "name": "MakeID L1",
+  "id": "makeid-l1",
+  "usb": { "vendorId": "09c5", "productId": "0200" },
+  "dpi": 203,
+  "connection": {
+    "defaultBaudRate": 57600,
+    "defaultDevice": { "win32": "COM3", "linux": "/dev/usb/lp0" },
+    "serialPattern": "^COM\\d+$|ttyUSB|ttyACM|ttyS|ttyAMA|cu\\."
+  },
+  "protocol": {
+    "rasterCommand": "gs-v0",
+    "prefix": [16, 255, 254, 1, 16, 255, 254, 64],
+    "gsV0": {
+      "m": null,
+      "headerFormat": "heightBytesBE-widthPxBE",
+      "trailer": [0]
+    },
+    "postfix": [27, 74, 64, 16, 255, 254, 69],
+    "feedCommand": { "opcode": [27, 74], "unit": "dots" }
+  },
+  "raster": {
+    "orientation": "column-major",
+    "pixelsPerByte": 8,
+    "byteOrder": "topLSB",
+    "whiteValue": 1
+  },
+  "limits": {
+    "maxWidthPx": 255,
+    "maxHeightPx": null,
+    "safeWidthPx": 227,
+    "safeHeightPx": 136
+  },
+  "media": {
+    "paperTypes": ["diecut", "continuous"],
+    "defaultType": "diecut",
+    "diecut": { "labelWidthPx": 227, "labelHeightPx": 136 },
+    "continuous": { "feedAfterDots": 64 }
+  },
+  "notes": "No habla ESC/POS texto plano: requiere framing 0x10 0xFF 0xFE + raster GS v 0. Ancho >255px -> papel en blanco. Multi-bloque no funciona."
+}
