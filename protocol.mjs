@@ -23,7 +23,7 @@ export function loadProfile(idOrPath) {
 }
 
 // Codificadores de cabecera GS v 0 según el perfil.
-//   heightBytesBE-widthPxBE  -> MakeID L1: alto en bytes (BE), ancho en px (BE) + trailer
+//   heightBytesBE-widthPxBE  -> perfil column-major tipo makeid-l1: alto en bytes (BE), ancho en px (BE) + trailer
 //   widthBytesLE-heightDotsLE -> ESC/POS estándar: ancho en bytes (LE), alto en dots (LE)
 const HEADER_ENCODERS = {
   "heightBytesBE-widthPxBE": (W, H) => [H >> 8, H & 0xff, W >> 8, W & 0xff],

@@ -1,19 +1,19 @@
 {
-  "name": "makeid-l1-printer-core",
+  "name": "printer-core",
   "version": "1.0.1",
   "author": {
     "name": "cabrasky",
     "email": "javiemateos149@gmail.com"
   },
-  "description": "Core printer functionality for MakeID L1",
+  "description": "Generic thermal label printer core: template rendering, rasterization and printing, driven by per-printer JSON profiles",
   "main": "dist/index.js",
   "type": "module",
   "keywords": [
     "printer",
-    "label",
-    "MakeID",
-    "L1",
     "thermal",
+    "label",
+    "escpos",
+    "raster",
     "template",
     "json",
     "typescript",

@@ -1,6 +1,6 @@
-# printer-core: MakeID L1 Printer Functionality ✨
+# printer-core 🖨️
 
-This package provides the essential core functionality for the MakeID L1 printer, encompassing template rendering, printing operations, and a suite of utility functions. This document serves as a comprehensive guide to its primary entry points: `index.ts` and `lib.ts`.
+Generic thermal **label printer core**: render JSON templates to a raster and print them on any thermal printer described by a [printer profile](printers/) — protocol bytes, raster layout, firmware limits and paper types, all externalized as data. This package provides template rendering, printing operations, and a suite of utility functions. This document serves as a comprehensive guide to its primary entry points: `index.ts` and `lib.ts`.
 
 ## 📖 Table of Contents
 - [Supported Printers](#supported-printers)
@@ -23,7 +23,7 @@ This package provides the essential core functionality for the MakeID L1 printer
 
 ## Supported Printers 🖨️
 
-Every printer supported by this repo is defined by a **profile** in [`printers/`](printers/) — one JSON file per model (protocol bytes, raster layout, DPI, firmware limits, connection defaults, supported paper). Adding a new printer = adding one JSON file; no code changes required.
+This module is **printer-agnostic** — the code contains no printer-specific logic. Every printer supported by this repo is defined by a **profile** in [`printers/`](printers/) — one JSON file per model (protocol bytes, raster layout, DPI, firmware limits, connection defaults, supported paper). Adding a new printer = adding one JSON file; no code changes required.
 
 | Printer | Profile | USB VID:PID | Protocol | Raster | Connection | Diecut (precut) | Continuous (roll) | Physically validated |
 |---|---|---|---|---|---|---|---|---|
@@ -54,7 +54,7 @@ The `index.ts` file is designed as the primary entry point for the printer appli
 Here's how you can leverage the `printTemplate`, `printFromFile`, and `printFromTemplate` functions from `index.ts`:
 
 ```typescript
-import { printTemplate, printFromFile, printFromTemplate } from 'makeid-l1-printer-core/lib.js';
+import { printTemplate, printFromFile, printFromTemplate } from 'printer-core/lib.js';
 
 // Print using a built-in template by its registered name
 await printTemplate('simple-text', { text: 'Hello World' });
@@ -127,7 +127,7 @@ To maximize the reusability of your templates, make extensive use of variables. 
 ## Core Services and Utilities for Advanced Use Cases ⚙️
 
 For scenarios demanding more granular control over printer operations or for building highly customized workflows, you can directly interact with the underlying core services:
-- **PrinterService**: This service is responsible for managing low-level communication protocols with the MakeID L1 printer hardware.
+- **PrinterService**: This service is responsible for managing low-level communication protocols with the printer hardware (as defined by the active profile).
 - **Logger**: A robust utility for comprehensive logging and debugging, allowing you to trace application flow and diagnose issues.
 - **ImageProcessor**: Handles the critical task of converting structured template data into the specific image formats required by the printer.
 - **ArgumentParser**: A helper utility designed for parsing command-line interface (CLI) arguments, enabling configurable application behavior.
@@ -178,7 +178,7 @@ Configuration files offer a powerful way to extensively customize printer settin
   }
 }
 ```
-- `printer.port`: Specifies the serial port connected to your MakeID L1 printer (e.g., COM3 on Windows systems, /dev/ttyUSB0 on Linux/macOS).
+- `printer.port`: Specifies the serial port connected to your printer (e.g., COM3 on Windows systems, /dev/ttyUSB0 on Linux/macOS).
 - `printer.baudRate`: Sets the communication speed (in bits per second) for the serial connection between your application and the printer.
 - `printer.width`/`height`: Defines the desired dimensions (in pixels) of the image data that will be rendered from your templates and sent to the printer.
 - `debug.enabled`: A boolean flag that, when set to true, enables detailed debug logging, providing more verbose output for development and troubleshooting.
@@ -242,11 +242,11 @@ All runtime choices live in `config.json` (override with `PRINTER_CONFIG` env):
 
 ### Printer profiles (`printers/*.json`)
 
-All "magic numbers" are externalized per printer model: protocol bytes (prefix/GS v 0 header format/postfix/trailer/feed command), raster layout (column-major vs row-major, bit order), DPI, firmware limits, connection defaults and supported paper types. **Adding another printer = adding one JSON file** (see `printers/escpos-58.json` for a standard ESC/POS example). Header formats supported: `heightBytesBE-widthPxBE` (MakeID L1) and `widthBytesLE-heightDotsLE` (standard ESC/POS).
+All "magic numbers" are externalized per printer model: protocol bytes (prefix/GS v 0 header format/postfix/trailer/feed command), raster layout (column-major vs row-major, bit order), DPI, firmware limits, connection defaults and supported paper types. **Adding another printer = adding one JSON file** (see `printers/escpos-58.json` for a standard ESC/POS example). Header formats supported: `heightBytesBE-widthPxBE` (used by the MakeID L1 profile) and `widthBytesLE-heightDotsLE` (standard ESC/POS).
 
-### Protocol notes (MakeID L1)
+### Protocol notes (MakeID L1 profile)
 
-- The L1 does **not** speak plain ESC/POS text — it needs the custom framing `0x10 0xFF 0xFE` wrapping a GS v 0 raster (all encoded in `printers/makeid-l1.json`).
+- The L1 does **not** speak plain ESC/POS text — it needs the custom framing `0x10 0xFF 0xFE` wrapping a GS v 0 raster (all encoded in its profile, `printers/makeid-l1.json`).
 - Firmware limits: raster width **≤ 255 px** per block (wider → blank paper); safe size is 227×136. Multi-block/split jobs do not work.
 - Templates: `dimensions {width, height}` in **pixels**, elements text/rectangle/line/circle/stripes/grid, variables `{{line1}}`/`{{line2}}`.
 

@@ -305,7 +305,7 @@ export class ArgumentParser {
    */
   static getHelpText(): string {
     return `
-MakeID L1 Printer Control - Enhanced Command Line Options
+Printer Control - Enhanced Command Line Options
 =========================================================
 
 Usage:
