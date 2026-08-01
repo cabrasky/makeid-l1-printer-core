@@ -8,8 +8,10 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)));
 const PRINTERS_DIR = path.join(ROOT, "printers");
 const CONFIG_PATH = process.env.PRINTER_CONFIG ?? path.join(ROOT, "config.json");
 
-export function loadConfig() {
-  const config = JSON.parse(readFileSync(CONFIG_PATH, "utf8"));
+export function loadConfig(configPath) {
+  // configPath opcional: el server (label-printer-studio) pasa su propio
+  // config.json (dispositivo/medio elegidos por el usuario). Sin él, el del paquete.
+  const config = JSON.parse(readFileSync(configPath ?? CONFIG_PATH, "utf8"));
   return config;
 }
 
